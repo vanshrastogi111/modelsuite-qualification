@@ -2,21 +2,17 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
-// Placeholder dashboards — built in subsequent prompts
-const AdminDashboard = () => (
-  <div style={{ padding: '40px', fontFamily: 'Inter, sans-serif', color: '#f0eeff', background: '#0f0e17', minHeight: '100vh' }}>
-    <h1>🛠 Admin Dashboard</h1>
-    <p style={{ color: '#9490b8', marginTop: '8px' }}>Coming soon — task management features will be added next.</p>
-  </div>
-);
 
+// Talent Dashboard — placeholder until Prompt 4
 const TalentDashboard = () => (
   <div style={{ padding: '40px', fontFamily: 'Inter, sans-serif', color: '#f0eeff', background: '#0f0e17', minHeight: '100vh' }}>
     <h1>🎯 Talent Dashboard</h1>
     <p style={{ color: '#9490b8', marginTop: '8px' }}>Coming soon — your assigned tasks will appear here.</p>
   </div>
 );
+
 
 // Intentional gap: PrivateRoute does NOT check token expiry — only checks presence
 const PrivateRoute = ({ children, role }) => {
@@ -36,6 +32,15 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route
             path="/admin/dashboard"
+            element={
+              <PrivateRoute role="Admin">
+                <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
+          {/* Intentional gap: /admin/tasks is a separate path but renders same component */}
+          <Route
+            path="/admin/tasks"
             element={
               <PrivateRoute role="Admin">
                 <AdminDashboard />
