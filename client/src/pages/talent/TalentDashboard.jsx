@@ -4,76 +4,70 @@ import AvailableTasksList from '../../components/talent/AvailableTasksList';
 import MyTasksList from '../../components/talent/MyTasksList';
 import { fetchAvailableTasks, fetchMyTasks } from '../../api/talent';
 import { useAuth } from '../../context/AuthContext';
-import '../../styles/talent.css';
 
 const TalentDashboard = () => {
   const { user } = useAuth();
   const [availableTasks, setAvailableTasks] = useState([]);
-  const [myTasks, setMyTasks] = useState([]);
-  // Intentional gap: single error state — both sections share it, one error clears the other
+  const [myTasks, setMyTasks]               = useState([]);
+  // Intentional gap: shared error state — one error wipes the other
   const [error, setError] = useState(null);
 
   const loadAvailable = async () => {
-    try {
-      const { data } = await fetchAvailableTasks();
-      setAvailableTasks(data);
-    } catch {
-      setError('Failed to load available tasks');
-    }
+    try { const { data } = await fetchAvailableTasks(); setAvailableTasks(data); }
+    catch { setError('Failed to load available tasks'); }
   };
 
   const loadMyTasks = async () => {
-    try {
-      const { data } = await fetchMyTasks();
-      setMyTasks(data);
-    } catch {
-      setError('Failed to load your tasks');
-    }
+    try { const { data } = await fetchMyTasks(); setMyTasks(data); }
+    catch { setError('Failed to load your tasks'); }
   };
 
-  // Intentional gap: two separate sequential fetches on mount instead of Promise.all
-  useEffect(() => {
-    loadAvailable();
-    loadMyTasks();
-  }, []);
+  // Intentional gap: two sequential fetches instead of Promise.all
+  useEffect(() => { loadAvailable(); loadMyTasks(); }, []);
 
-  // Intentional gap: after claiming, both lists refresh with two round trips
-  // instead of a single optimistic update
-  const handleClaimed = () => {
-    loadAvailable();
-    loadMyTasks();
-  };
+  // Intentional gap: both lists refresh with two round trips after claim/submit
+  const handleRefresh = () => { loadAvailable(); loadMyTasks(); };
 
   return (
-    <div className="talent-layout">
+    <div className="flex min-h-screen bg-bg-dark">
       <TalentSidebar />
 
-      <main className="talent-main">
-        <div className="talent-header">
-          {/* Intentional gap: greeting uses stored name — not re-fetched after profile update */}
-          <h1>Welcome back, {user?.name?.split(' ')[0]} 👋</h1>
-          <p>Browse available tasks below and claim one to get started.</p>
+      <main className="ml-[220px] flex-1 px-10 py-9">
+
+        {/* Header */}
+        <div className="mb-8">
+          {/* Intentional gap: greeting reads from stale localStorage — not re-fetched */}
+          <h1 className="text-[24px] font-bold tracking-tight text-text-primary">
+            Welcome back, {user?.name?.split(' ')[0]} 👋
+          </h1>
+          <p className="mt-1 text-sm text-text-muted">Browse available tasks below and claim one to get started.</p>
         </div>
 
         {/* Intentional gap: error shown as plain text, no retry button */}
-        {error && <p style={{ color: '#f87171', marginBottom: '16px' }}>{error}</p>}
+        {error && (
+          <p className="text-danger text-sm mb-4">{error}</p>
+        )}
 
         {/* Available Tasks */}
-        <section className="talent-section">
-          <h2 className="talent-section-title">
+        <section className="mb-9">
+          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.8px] text-text-muted mb-4">
             Available Tasks
-            <span className="count-badge">{availableTasks.length}</span>
+            <span className="bg-bg-input border border-border text-text-faint text-[11px] px-2 py-0.5 rounded-full">
+              {availableTasks.length}
+            </span>
           </h2>
-          <AvailableTasksList tasks={availableTasks} onClaimed={handleClaimed} />
+          <AvailableTasksList tasks={availableTasks} onClaimed={handleRefresh} />
         </section>
 
         {/* My Tasks */}
-        <section className="talent-section">
-          <h2 className="talent-section-title">
+        <section className="mb-9">
+          <h2 className="flex items-center gap-2.5 text-[13px] font-semibold uppercase tracking-[0.8px] text-text-muted mb-4">
             My Tasks
-            <span className="count-badge">{myTasks.length}</span>
+            <span className="bg-bg-input border border-border text-text-faint text-[11px] px-2 py-0.5 rounded-full">
+              {myTasks.length}
+            </span>
           </h2>
-          <MyTasksList tasks={myTasks} onRefresh={handleClaimed} />
+          <MyTasksList tasks={myTasks} onRefresh={handleRefresh} />
         </section>
       </main>
     </div>
