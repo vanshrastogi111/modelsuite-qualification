@@ -27,31 +27,11 @@
 - [ ] PR title is exactly your assigned branch name
 - [ ] Latest target branch (`master`) was pulled immediately before opening this PR
 
-### PR Type (required – exactly one must be checked)
-- [ ] UI-only (styling / layout only)
-- [ ] Functional (state / logic / API)
-- [ ] Fix (bug fix)
-- [ ] Refactor (no behavior change)
-- [ ] Mixed
-
-### Files & Scope
-- [ ] Only production-relevant files strictly required for this task were touched.
-
 ### Quality & Safety
 - [ ] Change tested locally
 - [ ] Full diff reviewed before submitting (no blind copy/paste)
 - [ ] No secrets, keys, or personal data included
 
-### Scope Lock (required)
-I confirm that I did **NOT** change any of the following:
-- [ ] business logic (unless required by the task)
-- [ ] API contracts (unless required by the task)
-- [ ] database models (unless required by the task)
-- [ ] permissions / auth
-- [ ] routing / navigation (unless required by the task)
-
-### Publication Restrictions
-- No unnecessary files, legacy/dead code, testing guides, internal docs, migration scripts, experimental or commented-out code.
 
 ---
 
